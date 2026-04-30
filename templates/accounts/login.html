@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Social App</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+<body>
+    <header class="top-bar">
+        <h1>{% block header_title %}A World of Projects One Scroll Away{% endblock %}</h1>
+    </header>
+
+    <main>
+        <div class="login-box">
+            {% block box_content %}
+            <h2>Login</h2>
+
+            {% if error %}
+            <p style="color: red; font-weight: 600;">{{ error }}</p>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <label for="username">User Name/Email:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+
+                <a href="#" class="forgot">Forgot Password?</a>
+                <button type="submit">Sign in</button>
+            </form>
+
+            <p class="register-text">
+                Don’t have an account? <a href="{% url 'signup'%}" class="create-account">Create Account</a>
+            </p>
+            {% endblock %}
+        </div>
+    </main>
+</body>
+</html>

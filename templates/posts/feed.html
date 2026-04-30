@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Feed | Social App{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/feed.css' %}">
+    {% block extra_css %}{% endblock %}
+
+</head>
+
+<body>
+    <div class="profile-wrapper">
+            <img
+            class="profile-icon"
+            src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=111827&color=ffffff"
+            alt="Profile picture"
+            id="profileToggle"
+            />
+            <div class="profile-dropdown" id="profileDropdown">
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="#">Settings</a>
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Sign Out</button>
+            </form>
+        </div>
+    </div>
+    <div class="sidebar">
+        <a href="{% url 'posts' %}">Home</a>
+        <a href="{% url 'my_projects' %}">My Projects</a>
+        <a href="{% url 'groups' %}">Groups</a>
+        <a href="{% url 'messages' %}">Messages</a>
+
+    </div>
+
+    {% block content %}
+    <div class="feed">
+        <h2>Feed</h2>
+
+        <button class="quick-add" id="quickAddBtn">+ Quick Add Your Own Post</button>
+
+        <div class="new-post-box" id="newPostBox">
+            <form method="post">
+                {% csrf_token %}
+
+                <textarea name="content" placeholder="What's your next idea?" id="newPostText" required></textarea>
+
+                <button type="submit" class="submit-post" id="submitPostBtn">
+                    Post
+                </button>
+            </form>
+        </div>
+
+
+        {% for post in posts %}
+        <div class="post">
+            <h3>{{ post.author.username }}</h3>
+            <p>{{ post.content }}</p>
+
+            {% if post.author == request.user %}
+                <div class="post-actions">
+                    <a href="{% url 'post_edit' post.id %}">Edit</a>
+                    <a href="{% url 'post_delete' post.id %}">Delete</a>
+        </div>
+    {% endif %}
+        </div>
+        {% empty %}
+        <p>No posts yet.</p>
+        {% endfor %}
+
+    </div>
+    {% endblock %}
+
+    <!-- SCRIPTS -->
+    <script>
+        const profileToggle = document.getElementById("profileToggle");
+        const profileDropdown = document.getElementById("profileDropdown");
+
+        if (profileToggle && profileDropdown) {
+            profileToggle.addEventListener("click", function (event) {
+                event.stopPropagation();
+                profileDropdown.classList.toggle("show");
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!profileDropdown.contains(event.target) && event.target !== profileToggle) {
+                    profileDropdown.classList.remove("show");
+                }
+            });
+        }
+
+
+    </script>
+
+    {% block extra_js %}
+    <script>
+        const quickAddBtn = document.getElementById("quickAddBtn");
+        const newPostBox = document.getElementById("newPostBox");
+
+        if (quickAddBtn && newPostBox) {
+            quickAddBtn.addEventListener("click", function () {
+                newPostBox.classList.toggle("show");
+            });
+        }
+    </script>
+    {% endblock %}
+
+</body>
+</html>
