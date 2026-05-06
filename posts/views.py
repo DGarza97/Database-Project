@@ -18,7 +18,7 @@ def posts_page(request):
 
     posts = Post.objects.order_by("-created_at")
 
-    return render(request, "posts/posts.html", {
+    return render(request, "posts/feed.html", {
         "posts": posts
     })
 

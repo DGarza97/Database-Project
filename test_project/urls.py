@@ -26,7 +26,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('posts/', include('posts.urls')),
     path("profile/", include("profiles.urls")),
-    path('messaging/', include('messaging.urls')),
+    path('messages/', include('messaging.urls')),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path('myprojects/', include('myprojects.urls')),
     path("messages/", include("messaging.urls")),

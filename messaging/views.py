@@ -34,7 +34,7 @@ def inbox_view(request, conversation_id=None):
                 content=request.POST["content"]
             )
             active_conversation.save()  # bumps updated_at
-            return redirect("messages", conversation_id=active_conversation.id)
+            return redirect("messages:conversation", conversation_id=active_conversation.id)
 
     return render(request, "messaging/messages.html", {
         "conversations": conversations,
