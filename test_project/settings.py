@@ -41,7 +41,7 @@ if DEBUG:
         "https://*.app.github.dev",
     ]
 
-LOGOUT_REDIRECT_URL = "/login/"
+LOGOUT_REDIRECT_URL = "login"
 
 
 # Application definition

@@ -1,43 +1,40 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Conversation, Message
+from django.contrib.auth.models import User
+from django.db.models import Q
+from .models import Message
 
 
 @login_required
-def inbox_view(request, conversation_id=None):
-    conversations = Conversation.objects.filter(
-        participants=request.user
-    ).distinct().order_by("-updated_at")
-    for convo in conversations:
-        convo.other_user = convo.participants.exclude(id=request.user.id).first()
+def inbox_view(request, user_id=None):
+    # Get all users you have messaged with (sent or received)
+    conversations = User.objects.filter(
+        Q(sent_messages__receiver=request.user) |
+        Q(received_messages__sender=request.user)
+    ).distinct()
 
-
-    active_conversation = None
+    active_user = None
     messages = []
 
-    if conversation_id:
-        active_conversation = get_object_or_404(
-            Conversation,
-            id=conversation_id,
-            participants=request.user
-        )
-        active_conversation.other_user = (
-            active_conversation.participants.exclude(id=request.user.id).first()
-        )
+    if user_id:
+        active_user = get_object_or_404(User, id=user_id)
 
-        messages = active_conversation.messages.select_related("sender").order_by("created_at")
+        # Fetch direct messages between the two users
+        messages = Message.objects.filter(
+            Q(sender=request.user, receiver=active_user) |
+            Q(sender=active_user, receiver=request.user)
+        ).order_by("created_at")
 
         if request.method == "POST":
             Message.objects.create(
-                conversation=active_conversation,
                 sender=request.user,
+                receiver=active_user,
                 content=request.POST["content"]
             )
-            active_conversation.save()  # bumps updated_at
-            return redirect("messages:conversation", conversation_id=active_conversation.id)
+            return redirect("messages:conversation", user_id=active_user.id)
 
     return render(request, "messaging/messages.html", {
         "conversations": conversations,
-        "active_conversation": active_conversation,
+        "active_user": active_user,
         "messages": messages,
     })

@@ -15,7 +15,7 @@ class ProfileForm(forms.ModelForm):
 
 @login_required
 def my_profile(request):
-    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile = request.user.profile  # cleaner (uses OneToOne relation)
     return render(
         request,
         "profile/profile.html",
@@ -25,7 +25,7 @@ def my_profile(request):
 
 @login_required
 def edit_profile(request):
-    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile = request.user.profile  # cleaner
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=profile)

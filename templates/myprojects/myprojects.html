@@ -30,9 +30,9 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="{% url 'posts' %}">Home</a>
-        <a href="{% url 'my_projects' %}">My Projects</a>
+        <a href="{% url 'my_projects' %}" class="active">My Projects</a>
         <a href="{% url 'groups' %}">Groups</a>
-        <a href="{% url 'messages:inbox' %}">Messages</a>
+        <a href="{% url 'messaging:inbox' %}">Messages</a>
     </div>
 
     <!-- Main Content -->
@@ -57,14 +57,14 @@
             </form>
         </div>
 
-        <!-- Projects List -->
+        <!-- Projects List (currently posts) -->
         {% for post in posts %}
             <div class="post">
-                <h3>{{ post.title }}</h3>
+                <h3>{{ post.user.username }}</h3>
                 <p>{{ post.content }}</p>
                 <small>{{ post.created_at }}</small>
 
-                {% if post.author == request.user %}
+                {% if post.user == request.user %}
                     <div class="post-actions">
                         <a href="{% url 'post_edit' post.id %}?next={{ request.path }}">Edit</a>
                         <a href="{% url 'post_delete' post.id %}?next={{ request.path }}">Delete</a>
@@ -82,24 +82,28 @@
         const profileToggle = document.getElementById("profileToggle");
         const profileDropdown = document.getElementById("profileDropdown");
 
-        profileToggle.addEventListener("click", function (event) {
-            event.stopPropagation();
-            profileDropdown.classList.toggle("show");
-        });
+        if (profileToggle && profileDropdown) {
+            profileToggle.addEventListener("click", function (event) {
+                event.stopPropagation();
+                profileDropdown.classList.toggle("show");
+            });
 
-        document.addEventListener("click", function (event) {
-            if (!profileDropdown.contains(event.target) && event.target !== profileToggle) {
-                profileDropdown.classList.remove("show");
-            }
-        });
+            document.addEventListener("click", function (event) {
+                if (!profileDropdown.contains(event.target) && event.target !== profileToggle) {
+                    profileDropdown.classList.remove("show");
+                }
+            });
+        }
 
         // Toggle new project form
         const quickAddBtn = document.getElementById("quickAddBtn");
         const newPostBox = document.getElementById("newPostBox");
 
-        quickAddBtn.addEventListener("click", function () {
-            newPostBox.classList.toggle("show");
-        });
+        if (quickAddBtn && newPostBox) {
+            quickAddBtn.addEventListener("click", function () {
+                newPostBox.classList.toggle("show");
+            });
+        }
     </script>
 
 </body>

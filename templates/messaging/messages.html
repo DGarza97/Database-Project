@@ -15,6 +15,7 @@
         <img class="profile-icon"
             src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=111827&color=ffffff"
             alt="Profile picture" id="profileToggle" />
+
         <div class="profile-dropdown" id="profileDropdown">
             <a href="{% url 'profile' %}">Profile</a>
             <a href="#">Settings</a>
@@ -30,25 +31,22 @@
         <a href="{% url 'posts' %}">Home</a>
         <a href="{% url 'my_projects' %}">My Projects</a>
         <a href="{% url 'groups' %}">Groups</a>
-        <a href="{% url 'messages:inbox' %}">Messages</a>
+        <a href="{% url 'messaging:inbox' %}">Messages</a>
     </div>
 
     <!-- MESSAGES LAYOUT -->
     <div class="messages-page">
 
-        <!-- CONVERSATIONS -->
+        <!-- USER LIST (formerly conversations) -->
         <div class="conversations">
             <h2>Messages</h2>
 
-            {% for conversation in conversations %}
-            <a href="{% url 'messages' conversation.id %}"
-                class="conversation {% if active_conversation and conversation.id == active_conversation.id %}active{% endif %}">
-                <strong>
-                    {{ conversation.other_user.username }}
-                </strong>
-                <p class="preview">
-                    {{ conversation.last_message|default:"No messages yet" }}
-                </p>
+            {% for user in conversations %}
+            <a href="{% url 'messages:conversation' user.id %}"
+               class="conversation {% if active_user and user.id == active_user.id %}active{% endif %}">
+
+                <strong>{{ user.username }}</strong>
+
             </a>
             {% empty %}
             <p class="empty-state">No conversations yet.</p>
@@ -58,11 +56,9 @@
         <!-- CHAT -->
         <div class="chat">
 
-            {% if active_conversation %}
+            {% if active_user %}
             <div class="chat-header">
-                <h3>
-                    {{ active_conversation.other_user.username }}
-                </h3>
+                <h3>{{ active_user.username }}</h3>
             </div>
 
             <div class="chat-messages">
@@ -83,7 +79,7 @@
 
             {% else %}
             <div class="chat-empty">
-                <p>Select a conversation to start messaging.</p>
+                <p>Select a user to start messaging.</p>
             </div>
             {% endif %}
 
@@ -114,5 +110,4 @@
     </script>
 
 </body>
-
 </html>

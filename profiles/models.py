@@ -12,6 +12,9 @@ class Profile(models.Model):
     )
     bio = models.TextField(blank=True, default="")
 
+    class Meta:
+        db_table = "profile"
+
     def __str__(self):
         return f"{self.user.username} Profile"
 
