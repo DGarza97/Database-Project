@@ -65,9 +65,33 @@
                 <small>{{ post.created_at }}</small>
 
                 {% if post.user == request.user %}
-                    <div class="post-actions">
-                        <a href="{% url 'post_edit' post.id %}?next={{ request.path }}">Edit</a>
-                        <a href="{% url 'post_delete' post.id %}?next={{ request.path }}">Delete</a>
+                    <div class="post-actions-bar">
+                        <!-- EDIT -->
+                        <a
+                            class="action-btn edit-btn"
+                            href="{% url 'post_edit' post.id %}?next={{ request.path }}"
+                        >
+                            ✏️ Edit
+                        </a>
+
+                        <!-- DELETE -->
+                        <form
+                            method="post"
+                            action="{% url 'post_delete' post.id %}?next={{ request.path }}"
+                            onsubmit="return confirm('Delete this project?');"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                class="action-btn delete-btn"
+                                type="submit"
+                            >
+                                🗑 Delete
+                            </button>
+
+                        </form>
+
                     </div>
                 {% endif %}
             </div>

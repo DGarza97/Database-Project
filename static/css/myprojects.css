@@ -222,3 +222,55 @@ body {
 .submit-post:hover {
     background: #3729a0;
 }
+
+/* PROJECT ACTIONS */
+
+.post-actions-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid #f0f0f0;
+    flex-wrap:wrap;
+}
+
+.post-actions-bar form{
+    display:inline-flex;
+    margin:0;
+}
+
+.action-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    background:none;
+    border:none;
+    border-radius:999px;
+    padding:8px 14px;
+    font-size:14px;
+    font-weight:600;
+    color:#4b5563;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.action-btn:hover{
+    background:#f3f4f6;
+}
+
+/* EDIT */
+
+.edit-btn:hover{
+    background:#f5f3ff;
+    color:#7c3aed;
+}
+
+/* DELETE */
+
+.delete-btn:hover{
+    background:#fef2f2;
+    color:#dc2626;
+}

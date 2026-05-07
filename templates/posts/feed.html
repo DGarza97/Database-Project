@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="{% static 'css/feed.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
@@ -54,25 +55,21 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-
         <a href="{% url 'posts' %}">
             Home
         </a>
-
         <a href="{% url 'my_projects' %}">
             My Projects
         </a>
-
         <a href="{% url 'groups' %}">
             Groups
         </a>
-
         <a href="{% url 'messaging:inbox' %}">
             Messages
         </a>
-
     </div>
 
+    {% block content %}
     <!-- FEED -->
     <div class="feed">
 
@@ -278,7 +275,7 @@
         {% endfor %}
 
     </div>
-
+     {% endblock %}
     <!-- JS -->
     <script>
 
@@ -347,6 +344,6 @@
             });
 
     </script>
-
+    
 </body>
 </html>
