@@ -15,17 +15,16 @@ class ProfileForm(forms.ModelForm):
 
 @login_required
 def my_profile(request):
-    profile = request.user.profile  # cleaner (uses OneToOne relation)
-    return render(
-        request,
-        "profile/profile.html",
-        {"profile": profile}
-    )
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    return render(request, "profile/profile.html", {
+        "profile": profile
+    })
 
 
 @login_required
 def edit_profile(request):
-    profile = request.user.profile  # cleaner
+    profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=profile)
@@ -35,8 +34,6 @@ def edit_profile(request):
     else:
         form = ProfileForm(instance=profile)
 
-    return render(
-        request,
-        "profile/edit_profile.html",
-        {"form": form}
-    )
+    return render(request, "profile/edit_profile.html", {
+        "form": form
+    })
