@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-e4@-b8z4mmxrjsjw)yv!a+4vg#ol+c4&4+rto1t^9u=wxzo-ha
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 if DEBUG:
     ALLOWED_HOSTS = [
@@ -35,7 +35,6 @@ if DEBUG:
         "127.0.0.1",
         ".github.dev",
         ".app.github.dev",
-        "*",
     ]
 
     CSRF_TRUSTED_ORIGINS = [
@@ -66,6 +65,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
