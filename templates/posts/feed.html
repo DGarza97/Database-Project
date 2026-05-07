@@ -5,148 +5,348 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Feed | Social App{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="{% static 'css/feed.css' %}">
-    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
     <!-- PROFILE -->
     <div class="profile-wrapper">
+
         <img
             class="profile-icon"
             src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=111827&color=ffffff"
-            alt="Profile picture"
+            alt="Profile"
             id="profileToggle"
-        />
+        >
 
         <div class="profile-dropdown" id="profileDropdown">
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="#">Settings</a>
 
-            <form method="post" action="{% url 'logout' %}" class="logout-form">
+            <a href="{% url 'profile' %}">
+                Profile
+            </a>
+
+            <a href="#">
+                Settings
+            </a>
+
+            <form
+                method="post"
+                action="{% url 'logout' %}"
+                class="logout-form"
+            >
                 {% csrf_token %}
-                <button type="submit" class="logout-btn">Sign Out</button>
+
+                <button
+                    type="submit"
+                    class="logout-btn"
+                >
+                    Sign Out
+                </button>
+
             </form>
+
         </div>
+
     </div>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <a href="{% url 'posts' %}">Home</a>
-        <a href="{% url 'my_projects' %}">My Projects</a>
-        <a href="{% url 'groups' %}">Groups</a>
-        <a href="{% url 'messaging:inbox' %}">Messages</a>
+
+        <a href="{% url 'posts' %}">
+            Home
+        </a>
+
+        <a href="{% url 'my_projects' %}">
+            My Projects
+        </a>
+
+        <a href="{% url 'groups' %}">
+            Groups
+        </a>
+
+        <a href="{% url 'messaging:inbox' %}">
+            Messages
+        </a>
+
     </div>
 
-    {% block content %}
+    <!-- FEED -->
     <div class="feed">
+
         <h2>Feed</h2>
 
-        <!-- NEW POST -->
-        <button class="quick-add" id="quickAddBtn">+ Quick Add Your Own Post</button>
+        <!-- QUICK ADD -->
+        <button
+            class="quick-add"
+            id="quickAddBtn"
+        >
+            + Quick Add Your Own Post
+        </button>
 
-        <div class="new-post-box" id="newPostBox">
+        <!-- NEW POST -->
+        <div
+            class="new-post-box"
+            id="newPostBox"
+        >
+
             <form method="post">
+
                 {% csrf_token %}
-                <textarea name="content" placeholder="What's your next idea?" required></textarea>
-                <button type="submit">Post</button>
+
+                <textarea
+                    name="content"
+                    placeholder="What's your next idea?"
+                    required
+                ></textarea>
+
+                <button
+                    type="submit"
+                    class="submit-post"
+                >
+                    Post
+                </button>
+
             </form>
+
         </div>
 
         <!-- POSTS -->
         {% for post in posts %}
+
         <div class="post">
 
             <!-- HEADER -->
-            <h3>{{ post.user.username }}</h3>
-            <p>{{ post.content }}</p>
+            <div class="post-header">
+
+                <img
+                    class="post-avatar"
+                    src="https://ui-avatars.com/api/?name={{ post.user.username }}&background=111827&color=ffffff"
+                    alt="avatar"
+                >
+
+                <div class="post-user-info">
+
+                    <h3>{{ post.user.username }}</h3>
+
+                    <span class="post-time">
+                        {{ post.created_at|timesince }} ago
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- CONTENT -->
+            <div class="post-content">
+
+                <p>{{ post.content }}</p>
+
+            </div>
 
             <!-- ATTACHMENTS -->
             {% if post.attachments.all %}
-                <div class="attachments">
-                    {% for file in post.attachments.all %}
-                        <a href="{{ file.file.url }}" target="_blank">
-                            📎 Attachment
-                        </a>
-                    {% endfor %}
-                </div>
+
+            <div class="attachments">
+
+                {% for file in post.attachments.all %}
+
+                <a
+                    href="{{ file.file.url }}"
+                    target="_blank"
+                >
+                    📎 Attachment
+                </a>
+
+                {% endfor %}
+
+            </div>
+
             {% endif %}
 
-            <!-- LIKE BUTTON -->
-            <form method="post" action="{% url 'toggle_like' post.id %}">
-                {% csrf_token %}
-                <button type="submit">
-                    👍 Like ({{ post.likes.count }})
+            <!-- ACTION BAR -->
+            <div class="post-actions-bar">
+
+                <!-- LIKE -->
+                <form
+                    method="post"
+                    action="{% url 'toggle_like' post.id %}"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        class="action-btn like-btn"
+                        type="submit"
+                    >
+                        ❤️ {{ post.likes.count }}
+                    </button>
+
+                </form>
+
+                <!-- COMMENT -->
+                <button class="action-btn comment-toggle">
+
+                    💬 {{ post.comments.count }}
+
                 </button>
-            </form>
+
+                <!-- OWNER ACTIONS -->
+                {% if post.user == request.user %}
+
+                <a
+                    class="action-btn edit-btn"
+                    href="{% url 'post_edit' post.id %}"
+                >
+                    ✏️ Edit
+                </a>
+
+                <form
+                    method="post"
+                    action="{% url 'post_delete' post.id %}"
+                    onsubmit="return confirm('Delete this post?');"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        class="action-btn delete-btn"
+                        type="submit"
+                    >
+                        🗑 Delete
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+            </div>
 
             <!-- COMMENTS -->
             <div class="comments">
 
                 {% for comment in post.comments.all %}
-                    <div class="comment">
-                        <b>{{ comment.user.username }}</b>
-                        <span>{{ comment.content }}</span>
-                    </div>
+
+                <div class="comment">
+
+                    <b>{{ comment.user.username }}</b>
+
+                    <span>{{ comment.content }}</span>
+
+                </div>
+
                 {% empty %}
-                    <p class="no-comments">No comments yet.</p>
+
+                <p class="no-comments">
+                    No comments yet.
+                </p>
+
                 {% endfor %}
 
                 <!-- ADD COMMENT -->
-                <form method="post" action="{% url 'add_comment' post.id %}">
+                <form
+                    method="post"
+                    action="{% url 'add_comment' post.id %}"
+                    class="comment-form"
+                >
+
                     {% csrf_token %}
-                    <input type="text" name="content" placeholder="Write a comment..." required>
+
+                    <input
+                        type="text"
+                        name="content"
+                        placeholder="Write a comment..."
+                        required
+                    >
+
+                    <button type="submit">
+                        Post
+                    </button>
+
                 </form>
 
             </div>
 
-            <!-- OWNER ACTIONS -->
-            {% if post.user == request.user %}
-            <div class="post-actions">
-                <a href="{% url 'post_edit' post.id %}">Edit</a>
-                <a href="{% url 'post_delete' post.id %}">Delete</a>
-            </div>
-            {% endif %}
-
         </div>
 
         {% empty %}
-            <p>No posts yet.</p>
+
+        <p>No posts yet.</p>
+
         {% endfor %}
 
     </div>
-    {% endblock %}
 
-    <!-- SCRIPTS -->
+    <!-- JS -->
     <script>
-        const profileToggle = document.getElementById("profileToggle");
-        const profileDropdown = document.getElementById("profileDropdown");
+
+        // PROFILE DROPDOWN
+        const profileToggle =
+            document.getElementById("profileToggle");
+
+        const profileDropdown =
+            document.getElementById("profileDropdown");
 
         if (profileToggle && profileDropdown) {
-            profileToggle.addEventListener("click", function (event) {
-                event.stopPropagation();
+
+            profileToggle.addEventListener("click", function (e) {
+
+                e.stopPropagation();
+
                 profileDropdown.classList.toggle("show");
+
             });
 
-            document.addEventListener("click", function (event) {
-                if (!profileDropdown.contains(event.target) && event.target !== profileToggle) {
+            document.addEventListener("click", function (e) {
+
+                if (
+                    !profileDropdown.contains(e.target)
+                    &&
+                    e.target !== profileToggle
+                ) {
                     profileDropdown.classList.remove("show");
                 }
+
             });
+
         }
 
-        const quickAddBtn = document.getElementById("quickAddBtn");
-        const newPostBox = document.getElementById("newPostBox");
+        // QUICK POST
+        const quickAddBtn =
+            document.getElementById("quickAddBtn");
+
+        const newPostBox =
+            document.getElementById("newPostBox");
 
         if (quickAddBtn && newPostBox) {
-            quickAddBtn.addEventListener("click", function () {
-                newPostBox.classList.toggle("show");
-            });
-        }
-    </script>
 
-    {% block extra_js %}{% endblock %}
+            quickAddBtn.addEventListener("click", function () {
+
+                newPostBox.classList.toggle("show");
+
+            });
+
+        }
+
+        // COMMENT TOGGLE
+        document.querySelectorAll(".comment-toggle")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    const comments =
+                        button.closest(".post")
+                        .querySelector(".comments");
+
+                    comments.classList.toggle("show");
+
+                });
+
+            });
+
+    </script>
 
 </body>
 </html>
