@@ -14,14 +14,22 @@
     <div class="profile-wrapper">
         <img class="profile-icon"
             src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=111827&color=ffffff"
-            alt="Profile picture" id="profileToggle" />
+            alt="Profile picture"
+            id="profileToggle" />
 
         <div class="profile-dropdown" id="profileDropdown">
             <a href="{% url 'profile' %}">Profile</a>
             <a href="#">Settings</a>
-            <form method="post" action="{% url 'logout' %}" class="logout-form">
+
+            <form method="post"
+                  action="{% url 'logout' %}"
+                  class="logout-form">
+
                 {% csrf_token %}
-                <button type="submit" class="logout-btn">Sign Out</button>
+
+                <button type="submit" class="logout-btn">
+                    Sign Out
+                </button>
             </form>
         </div>
     </div>
@@ -37,19 +45,26 @@
     <!-- MESSAGES LAYOUT -->
     <div class="messages-page">
 
-        <!-- USER LIST (formerly conversations) -->
+        <!-- USER LIST -->
         <div class="conversations">
-            <h2>Messages</h2>
+
+            <h2>Users</h2>
 
             {% for user in conversations %}
-            <a href="{% url 'messages:conversation' user.id %}"
+
+            <a href="{% url 'messaging:conversation' user.id %}"
                class="conversation {% if active_user and user.id == active_user.id %}active{% endif %}">
 
                 <strong>{{ user.username }}</strong>
 
             </a>
+
             {% empty %}
-            <p class="empty-state">No conversations yet.</p>
+
+            <p class="empty-state">
+                No users found.
+            </p>
+
             {% endfor %}
         </div>
 
@@ -57,44 +72,65 @@
         <div class="chat">
 
             {% if active_user %}
+
             <div class="chat-header">
                 <h3>{{ active_user.username }}</h3>
             </div>
 
             <div class="chat-messages">
+
                 {% for message in messages %}
+
                 <div class="message {% if message.sender == request.user %}me{% else %}them{% endif %}">
                     {{ message.content }}
                 </div>
+
                 {% empty %}
-                <p class="empty-state">No messages yet.</p>
+
+                <p class="empty-state">
+                    No messages yet.
+                </p>
+
                 {% endfor %}
+
             </div>
 
             <form method="post" class="chat-input">
+
                 {% csrf_token %}
-                <textarea name="content" placeholder="Type a message…" required></textarea>
-                <button type="submit">Send</button>
+
+                <textarea
+                    name="content"
+                    placeholder="Type a message…"
+                    required></textarea>
+
+                <button type="submit">
+                    Send
+                </button>
+
             </form>
 
             {% else %}
+
             <div class="chat-empty">
                 <p>Select a user to start messaging.</p>
             </div>
+
             {% endif %}
 
         </div>
     </div>
 
-    <!-- AUTO-SCROLL -->
+    <!-- AUTO SCROLL -->
     <script>
         const chatMessages = document.querySelector(".chat-messages");
+
         if (chatMessages) {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     </script>
 
-    <!-- PROFILE JS -->
+    <!-- PROFILE DROPDOWN -->
     <script>
         const profileToggle = document.getElementById("profileToggle");
         const profileDropdown = document.getElementById("profileDropdown");
